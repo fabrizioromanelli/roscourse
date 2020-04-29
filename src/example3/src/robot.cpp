@@ -11,9 +11,9 @@ void sensorCallback(const example3::laser::ConstPtr& msg)
 
   for (auto it = msg->ranges.begin(); it != msg->ranges.end(); ++it)
   {
-    if ( ((it - msg->ranges.begin()) % 20) == 0 && (it - msg->ranges.begin()) != 0 )
+    if ( ((it - msg->ranges.begin()) % 25) == 0 && (it - msg->ranges.begin()) != 0 )
       cout << endl;
-    cout << fixed << setw(4) << setprecision(2) << *it << " ";
+    cout << fixed << setw(5) << setprecision(2) << *it << " ";
   }
   cout << flush << endl;
 }
@@ -23,6 +23,7 @@ int main(int argc, char **argv)
   // Inizializza ROS con un nodo denominato "robot"
   ros::init(argc, argv, "robot");
 
+  // Sottoscrive il nodo al topic sensorTopic per leggere i dati del laser
   ros::NodeHandle n;
   ros::Subscriber listener_sub = n.subscribe("sensorTopic", 1000, sensorCallback);
 

@@ -26,9 +26,14 @@ int main(int argc, char **argv)
     msg.range_max = 30;  // 30 m è il range massimo
 
     size_t vectorSize = fabs(msg.angle_max + fabs(msg.angle_min)) / msg.angle_increment + 1;
+    msg.ranges.resize(vectorSize);
 
     for (size_t idx = 0; idx < vectorSize; idx++)
-      msg.ranges.assign(idx, 0.0); // è il valore in metri degli scan per ogni incremento
+    {
+      srand (static_cast <unsigned> (ros::Time::now().nsec));
+      float r = msg.range_min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(msg.range_max-msg.range_min)));
+      msg.ranges[idx] = r; // è il valore in metri degli scan per ogni incremento
+    }
 
     laser_pub.publish(msg);
 
