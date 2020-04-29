@@ -10,29 +10,40 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
   ros::Publisher laser_pub = n.advertise<example3::laser>("sensorTopic", 1000);
   ros::Rate loop_rate(40);
- 
+
+  example3::laser msg;
+
+  // Scan range
+  msg.angle_min = -0.79; // -45°
+  msg.angle_max = 0.79;  // +45°
+  msg.angle_increment = 0.01; // 0.9° - distanza angolare tra le misure
+
+  msg.range_min = 0.2; // 0.2 m è il range minimo
+  msg.range_max = 30;  // 30 m è il range massimo
+
+  size_t vectorSize = fabs(msg.angle_max + fabs(msg.angle_min)) / msg.angle_increment + 1;
+  msg.ranges.resize(vectorSize);
+
+  std::vector<short> sign;
+  sign.resize(vectorSize);
+
   while (ros::ok())
   {
-    example3::laser msg;
-
     msg.header.stamp = ros::Time::now();
     ROS_INFO("Header timestamp: %u.%u", msg.header.stamp.sec, msg.header.stamp.nsec);
-    // Scan range
-    msg.angle_min = -0.79; // -45°
-    msg.angle_max = 0.79;  // +45°
-    msg.angle_increment = 0.01; // 0.9° - distanza angolare tra le misure
-
-    msg.range_min = 0.2; // 0.2 m è il range minimo
-    msg.range_max = 30;  // 30 m è il range massimo
-
-    size_t vectorSize = fabs(msg.angle_max + fabs(msg.angle_min)) / msg.angle_increment + 1;
-    msg.ranges.resize(vectorSize);
 
     for (size_t idx = 0; idx < vectorSize; idx++)
     {
       srand (static_cast <unsigned> (ros::Time::now().nsec));
-      float r = msg.range_min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(msg.range_max-msg.range_min)));
-      msg.ranges[idx] = r; // è il valore in metri degli scan per ogni incremento
+      float r = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/0.2));
+
+      if (msg.ranges[idx] >= msg.range_max)
+        sign[idx] = -1;
+
+      if (msg.ranges[idx] <= msg.range_min)
+        sign[idx] = 1;
+
+      msg.ranges[idx] = msg.ranges[idx] + sign[idx] * r; // è il valore in metri degli scan per ogni incremento
     }
 
     laser_pub.publish(msg);
