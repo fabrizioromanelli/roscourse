@@ -27,13 +27,23 @@ int main(int argc, char **argv)
   std::vector<short> sign;
   sign.resize(vectorSize);
 
+  // Initializzazione laser range con valori random tra range_min e range_max
+  for (auto it = msg.ranges.begin(); it != msg.ranges.end(); ++it)
+  {
+    srand (static_cast <unsigned> (ros::Time::now().nsec));
+    float r = msg.range_min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(msg.range_max - msg.range_min)));
+    msg.ranges[it - msg.ranges.begin()] = r;
+    sign[it - msg.ranges.begin()] = 1;
+  }
+
   while (ros::ok())
   {
     msg.header.stamp = ros::Time::now();
     ROS_INFO("Header timestamp: %u.%u", msg.header.stamp.sec, msg.header.stamp.nsec);
 
-    for (size_t idx = 0; idx < vectorSize; idx++)
+    for (auto it = msg.ranges.begin(); it != msg.ranges.end(); ++it)
     {
+      size_t idx = it - msg.ranges.begin();
       srand (static_cast <unsigned> (ros::Time::now().nsec));
       float r = static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/0.2));
 
