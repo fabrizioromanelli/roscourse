@@ -17,7 +17,9 @@ include_directories(${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ executable
 add_executable(sensor src/sensor.cpp)
+add_dependencies(sensor example3_generate_messages_cpp)
 add_executable(robot src/robot.cpp)
+add_dependencies(robot example3_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(sensor ${catkin_LIBRARIES})
