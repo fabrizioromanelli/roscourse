@@ -15,7 +15,7 @@ catkin_package(CATKIN_DEPENDS message_runtime)
 ## Specify additional locations of header files
 include_directories(${catkin_INCLUDE_DIRS})
 
-## Declare a C++ executable
+## Declare a C++ executable and add dependencies for messages
 add_executable(sensor src/sensor.cpp)
 add_dependencies(sensor example3_generate_messages_cpp)
 add_executable(robot src/robot.cpp)
